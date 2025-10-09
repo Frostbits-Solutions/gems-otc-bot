@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  bot:
+    build: 
+      context: .
+      dockerfile: Dockerfile.debug
+    container_name: telegram-bot-debug
+    env_file:
+      - .env
+    ports:
+      - "5678:5678"  # Debug port
+    volumes:
+      - .:/app
+    networks:
+      - bot-network
+    command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "main.py"]
+
+networks:
+  bot-network:
+    driver: bridge

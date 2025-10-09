@@ -1,0 +1,29 @@
+# Use official Python runtime as a parent image
+FROM python:3.11-slim
+
+# Set working directory in the container
+WORKDIR /app
+
+# Install system dependencies needed for Python packages
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt .
+
+# Install dependencies and debugpy
+RUN pip install --no-cache-dir -r requirements.txt debugpy
+
+# Copy the rest of the application
+COPY . .
+
+# Set Python path to include src directory
+ENV PYTHONPATH="${PYTHONPATH}:/app"
+
+# Expose debug port
+EXPOSE 5678
+
+# Keep container running with new main.py
+CMD ["python", "main.py"]
