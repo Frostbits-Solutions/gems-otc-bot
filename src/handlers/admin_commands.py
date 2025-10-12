@@ -22,12 +22,12 @@ async def admin_status_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     cpu_percent = psutil.cpu_percent(interval=1)
     
     status_message = (
-        "🔧 Bot Admin Status\n\n"
-        f"🐍 Python Version: {sys.version.split()[0]}\n"
-        f"💾 Memory Used: {memory.percent}%\n"
-        f"⚡ CPU Used: {cpu_percent}%\n"
-        f"👥 Connected Users: Under development\n"
-        f"📊 Messages Processed: Under development"
+        "Bot Admin Status\n\n"
+        f"Python Version: {sys.version.split()[0]}\n"
+        f"Memory Used: {memory.percent}%\n"
+        f"CPU Used: {cpu_percent}%\n"
+        f"Connected Users: Under development\n"
+        f"Messages Processed: Under development"
     )
     await update.message.reply_text(status_message)
 
@@ -46,6 +46,6 @@ async def broadcast_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     message = ' '.join(context.args)
     # TODO: Implement broadcast functionality
     await update.message.reply_text(
-        f"📢 Broadcast prepared: {message}\n"
+        f"Broadcast prepared: {message}\n"
         f"(Broadcast functionality under development)"
     )

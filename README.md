@@ -16,6 +16,7 @@ telegram-bot-test/
 │   │   ├── message_handlers.py
 │   │   └── admin_commands.py
 │   ├── models/          # Data models
+│   │   ├── supabase/    # Generated Supabase models
 │   │   ├── __init__.py
 │   │   └── user.py
 │   ├── utils/           # Utilities and helpers
@@ -32,6 +33,28 @@ telegram-bot-test/
 └── README.md
 ```
 
+## Dependencies
+
+### Database Type Generation
+
+This project uses [supabase-pydantic](https://github.com/kmbhm1/supabase-pydantic) to generate Python type definitions from Supabase database models. This package allows automatic generation of Pydantic models from your Supabase schema, ensuring type safety and consistency between your database and Python code.
+
+To install the type generation tool:
+```bash
+pip install supabase-pydantic
+```
+
+Generate types from your Supabase schema to `src/models/fastapi/`:
+```bash
+# Generate types in the specific directory
+sb-pydantic gen --type pydantic --framework fastapi --local -d src/models
+```
+
+The generated models will be placed in `src/models/supabase/` and can be imported as:
+```python
+from src.models.supabase.models import YourTableModel
+```
+
 ## Configuration
 
 1. Get a bot token from [@BotFather](https://t.me/botfather) on Telegram.
@@ -41,6 +64,8 @@ telegram-bot-test/
 TELEGRAM_BOT_TOKEN=your_bot_token_here
 LOG_LEVEL=INFO
 ADMIN_USER_ID=your_telegram_user_id
+VITE_SUPABASE_URL=http://host.docker.internal:54321 # To connect to your local supabase docker db
+
 ```
 
 ## Running the Bot

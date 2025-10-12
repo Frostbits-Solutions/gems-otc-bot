@@ -49,7 +49,7 @@ def admin_only(func: Callable) -> Callable:
         
         user = update.effective_user
         if str(user.id) != config.admin_user_id:
-            await update.message.reply_text("❌ You don't have permission to use this command.")
+            await update.message.reply_text("You don't have permission to use this command.")
             logger.warning(f"Unauthorized access attempt by user {user.id}")
             return
         

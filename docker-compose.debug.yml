@@ -7,13 +7,16 @@ services:
       dockerfile: Dockerfile.debug
     container_name: telegram-bot-debug
     env_file:
-      - .env
+      - .env.development.local
     ports:
-      - "5678:5678"  # Debug port
+      - "5678:5678"  # Debug port for VS Code
     volumes:
       - .:/app
     networks:
       - bot-network
+    # Enable host.docker.internal for reliable host access
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "main.py"]
 
 networks:
