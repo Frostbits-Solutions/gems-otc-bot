@@ -2,8 +2,8 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Remote Attach (Docker)",
-            "type": "python",
+            "name": "Debug : Bot",
+            "type": "debugpy",
             "request": "attach",
             "connect": {
                 "host": "localhost",
@@ -11,13 +11,31 @@
             },
             "pathMappings": [
                 {
-                    "localRoot": "${workspaceFolder}",
+                    "localRoot": "${workspaceFolder}/tg-bot",
                     "remoteRoot": "/app"
                 }
             ],
             "justMyCode": true,
             "preLaunchTask": "Start Docker Debug",
-            "postDebugTask": "Stop Docker Debug"
+            "postDebugTask": "Complete Debug Cleanup"
+        },
+        {
+            "name": "Debug: Mini App + Bot",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/tg-bot",
+                    "remoteRoot": "/app"
+                }
+            ],
+            "justMyCode": true,
+            "preLaunchTask": "Deploy Mini App + Start Bot Debug",
+            "postDebugTask": "Complete Debug Cleanup"
         }
     ]
 }

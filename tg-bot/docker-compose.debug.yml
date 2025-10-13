@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.debug
     container_name: telegram-bot-debug
     env_file:
-      - .env.development.local
+      - ../.env.development.local
     ports:
       - "5678:5678"  # Debug port for VS Code
     volumes:

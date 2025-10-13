@@ -4,7 +4,10 @@
         {
             "label": "Start Docker Debug",
             "type": "shell",
-            "command": "docker compose down && docker compose -f docker-compose.debug.yml up --build -d",
+            "command": "cd tg-bot && docker compose down && docker compose -f docker-compose.debug.yml up --build -d",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -14,12 +17,98 @@
         {
             "label": "Stop Docker Debug",
             "type": "shell",
-            "command": "docker compose -f docker-compose.debug.yml down",
+            "command": "cd tg-bot && docker compose -f docker-compose.debug.yml down",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": [],
             "group": {
                 "kind": "build",
                 "isDefault": false
             }
+        },
+        {
+            "label": "Deploy Mini App",
+            "type": "shell",
+            "command": "./scripts/debug-deploy.sh",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Stop Mini App",
+            "type": "shell",
+            "command": "./scripts/debug-stop.sh",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Deploy Mini App + Start Bot Debug",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Deploy Mini App",
+                "Start Docker Debug"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Stop All Debug Services",
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "Stop Docker Debug",
+                "Stop Mini App"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Complete Debug Cleanup",
+            "type": "shell",
+            "command": "cd tg-bot && docker compose -f docker-compose.debug.yml down && cd .. && ./scripts/debug-stop.sh",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
         }
     ]
 }

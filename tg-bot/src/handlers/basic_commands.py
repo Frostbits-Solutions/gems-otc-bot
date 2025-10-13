@@ -8,7 +8,7 @@ from telegram.ext import ContextTypes
 from ..utils.decorators import log_command
 from ..utils.logger import get_logger
 from ..utils.supabase_client import get_supabase_client
-from ..models.fastapi.schema_public_latest import CurrenciesBaseSchema
+from ..models.supabase.schema_public_latest import CurrenciesBaseSchema
 
 logger = get_logger(__name__)
 
@@ -33,7 +33,8 @@ async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "/start - Start the bot\n"
         "/help - Display this help\n"
         "/status - View bot status\n"
-        "/myid - Get your Telegram User ID\n\n"
+        "/myid - Get your Telegram User ID\n"
+        "/startapp - Launch Mini App demo\n\n"
         "/currencies - Debug purposes\n"
         "Admin Commands (if configured):\n"
         "/admin_status - System status\n"
@@ -72,6 +73,33 @@ async def myid_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     user_info += f"\n\nTo set as admin:\nADMIN_USER_ID={user.id}"
     
     await update.message.reply_text(user_info)
+
+
+@log_command
+async def start_app_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle the /startapp command - launches a basic Mini App."""
+    from telegram import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
+    import os
+    
+    user = update.effective_user
+    logger.info(f"User {user.username or user.first_name} ({user.id}) requested Mini App launch")
+    
+    # Get Mini App URL from environment variable
+    mini_app_url = os.getenv('MINI_APP_URL', 'http://localhost:8080/')
+    
+    # Create Web App button
+    keyboard = [
+        [InlineKeyboardButton("🚀 Launch Mini App", web_app=WebAppInfo(url=mini_app_url))]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    message = (
+        f"Hello {user.first_name}!\n\n"
+        "Welcome to our Mini App demo!\n\n"
+        "Click the button below to launch the Mini App interface:"
+    )
+    
+    await update.message.reply_text(message, reply_markup=reply_markup)
 
 
 

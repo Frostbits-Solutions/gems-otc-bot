@@ -15,7 +15,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
 from src.config.settings import config
 from src.utils.logger import setup_logging
-from src.handlers.basic_commands import start_handler, help_handler, status_handler, myid_handler, get_currencies_handler
+from src.handlers.basic_commands import start_handler, help_handler, status_handler, myid_handler, get_currencies_handler, start_app_handler
 from src.handlers.message_handlers import echo_handler, photo_handler, document_handler
 from src.handlers.admin_commands import admin_status_handler, broadcast_handler
 
@@ -32,6 +32,7 @@ def setup_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("status", status_handler))
     application.add_handler(CommandHandler("myid", myid_handler))
     application.add_handler(CommandHandler("currencies", get_currencies_handler))
+    application.add_handler(CommandHandler("startapp", start_app_handler))
 
     
     # Admin command handlers

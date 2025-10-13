@@ -4,7 +4,7 @@ Supabase database utility for the Telegram bot.
 from typing import List, Optional
 from supabase import create_client, Client
 from src.config.settings import config
-from src.models.fastapi.schema_public_latest import CurrenciesBaseSchema
+from src.models.supabase.schema_public_latest import CurrenciesBaseSchema
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
