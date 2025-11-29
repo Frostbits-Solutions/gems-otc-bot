@@ -1,7 +1,14 @@
 <script setup lang="ts">
-import { useTelegram } from '../composables/useTelegram'
+import { useTelegramStore } from '../stores/telegram'
+import { useRouter } from 'vue-router'
 
-const { tg, user } = useTelegram()
+const telegramStore = useTelegramStore()
+const user = telegramStore.initDataUnsafe?.user
+const router = useRouter()
+
+const goToDevView = () => {
+  router.push('/dev-telegram')
+}
 </script>
 
 <template>
@@ -12,12 +19,15 @@ const { tg, user } = useTelegram()
       <p v-if="user">Hello {{ user.first_name }}!</p>
     </div>
 
-    <div class="info" v-if="tg">
-      <p>Platform: {{ tg.platform || 'Unknown' }}</p>
-      <p>Version: {{ tg.version || 'Unknown' }}</p>
+    <div class="info" v-if="telegramStore.tg">
+      <p>Platform: {{ telegramStore.platform || 'Unknown' }}</p>
+      <p>Version: {{ telegramStore.version || 'Unknown' }}</p>
     </div>
 
-    <button v-if="tg" @click="tg.close()" class="btn">Close App</button>
+    <div class="actions">
+      <button @click="goToDevView" class="btn btn-dev">🔧 Dev: View Telegram Data</button>
+      <button v-if="telegramStore.tg" @click="telegramStore.tg.close()" class="btn btn-close">Close App</button>
+    </div>
   </div>
 </template>
 
@@ -52,12 +62,34 @@ const { tg, user } = useTelegram()
   color: var(--tg-theme-text-color, #000);
 }
 
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 .btn {
-  padding: 10px 20px;
+  padding: 12px 24px;
   background-color: var(--tg-theme-button-color, #007aff);
   color: var(--tg-theme-button-text-color, #fff);
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.btn-dev {
+  background-color: #6c757d;
+}
+
+.btn-close {
+  background-color: var(--tg-theme-button-color, #007aff);
 }
 </style>

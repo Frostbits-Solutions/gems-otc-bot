@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { useTelegram } from './composables/useTelegram'
+import { useTelegramStore } from './stores/telegram'
 
-const { tg } = useTelegram()
+const telegramStore = useTelegramStore()
 
-if (tg) {
-  tg.ready()
+if (telegramStore.tg) {
+  telegramStore.tg.ready()
 }
 </script>
 
