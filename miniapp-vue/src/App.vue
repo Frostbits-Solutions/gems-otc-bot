@@ -10,9 +10,9 @@ if (telegramStore.tg) {
 </script>
 
 <template>
-  <div class="app">
+  <UApp>
     <RouterView />
-  </div>
+  </UApp>
 </template>
 
 <style>
