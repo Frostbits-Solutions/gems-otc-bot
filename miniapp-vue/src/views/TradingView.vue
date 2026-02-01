@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useTradingPairsStore } from '@/stores/tradingPairs'
-import TradePairViewer from '@/components/display-data/TradePairViewer.vue'
+import TradePair from '@/components/display-data/TradePair.vue'
 
 const store = useTradingPairsStore()
 
@@ -73,7 +73,7 @@ onMounted(async () => {
         :key="`${pair.base_asset.asa_id}-${pair.quote_asset.asa_id}`"
         class="hover:scale-[1.01] transition-transform cursor-pointer"
       >
-        <TradePairViewer :pair="pair" />
+        <TradePair :pair="pair" />
       </UCard>
 
       <!-- Empty State -->

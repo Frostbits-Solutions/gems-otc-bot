@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, computed, ref } from 'vue'
 import { useTradingPairsStore } from '@/stores/tradingPairs'
-import TradePairViewer from '@/components/display-data/TradePairViewer.vue'
+import TradePair from '@/components/display-data/TradePair.vue'
 import type { TradingPair } from '@/models/crypto'
 
 const props = withDefaults(
@@ -85,19 +85,19 @@ onMounted(async () => {
     </div>
 
     <!-- Trading Pairs List -->
-    <div v-else class="flex flex-col gap-3 flex-grow items-center px-2 py-2 -mx-2">
+    <div v-else class="flex flex-col gap-3 flex-grow items-center py-2 w-full">
       <!-- Column Headers -->
       <div
-        class="flex items-center gap-3 w-full px-3 text-[10px] text-gray-500 uppercase tracking-wider"
+        class="flex items-center gap-4 w-full px-6 text-[11px] text-gray-500 uppercase tracking-wider mb-1"
       >
-        <div class="w-[44px]"></div>
-        <div class="w-[75px] ml-1">Pair</div>
+        <div class="w-[52px]"></div>
+        <div class="w-[110px] ml-1">Pair</div>
         <div class="flex-1 text-right">Price</div>
-        <div class="flex-1 text-center">Vol</div>
-        <div class="flex-shrink-0 text-right">DEX</div>
+        <div class="w-[70px] text-right">Vol</div>
+        <div class="w-[50px] text-right">Count</div>
       </div>
 
-      <TradePairViewer
+      <TradePair
         v-for="(pair, index) in displayedPairs"
         :key="getPairKey(pair)"
         :pair="pair"

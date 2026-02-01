@@ -2,6 +2,12 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+@theme {
+  --color-brand-primary: #667eea;
+  --color-brand-secondary: #764ba2;
+  --color-app-bg: #1a1b26;
+}
+
 #app {
   max-width: 1280px;
   margin: 0 auto;

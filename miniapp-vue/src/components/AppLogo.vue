@@ -10,8 +10,8 @@ const size = 200
 
 // Text settings
 const text = '• GEMS • APP • TRADE '
-const fontSize = 20 // px
-const letterSpacing = 0.3 // em
+const fontSize = 24 // px
+const letterSpacing = 0.2 // em
 const fontFamily = "'Archivo Black', sans-serif"
 
 // Circle settings

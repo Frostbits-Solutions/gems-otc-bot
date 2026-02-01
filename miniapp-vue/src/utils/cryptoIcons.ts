@@ -4,33 +4,61 @@
  */
 
 // Load all PNG icons lazily (not eager) - only loads when needed
+// Updated to source from asa-list assets
 const iconModules = import.meta.glob<{ default: string }>(
-  '@/data/cryptoicons/64/*.png',
+  '@/data/asa-list/assets/**/*.{png,svg}',
   { eager: false }
 )
 
-// Cache for loaded icons
+// Map<Ticker, FilePath> to store standardized paths
+const tickerToPathMap = new Map<string, string>()
+
+// Populate the map on module load
+Object.keys(iconModules).forEach((path) => {
+  const parts = path.split('/')
+  // Safety checks
+  if (parts.length < 2) return
+  const folder = parts[parts.length - 2]
+  if (!folder) return
+
+  // Logic: Extract ticker from folder name
+  // Folder format is either "TICKER" or "TICKER-ASAID"
+  let ticker = folder
+  const lastHyphenIndex = folder.lastIndexOf('-')
+  
+  if (lastHyphenIndex > 0) {
+    const potentialId = folder.substring(lastHyphenIndex + 1)
+    if (/^\d+$/.test(potentialId)) {
+      ticker = folder.substring(0, lastHyphenIndex)
+    }
+  }
+
+  // Normalize to uppercase for case-insensitive lookup
+  tickerToPathMap.set(ticker.toUpperCase(), path)
+})
+
+// Cache for loaded icon URLs
 const iconCache = new Map<string, string>()
 
 /**
  * Get the icon URL for a cryptocurrency by ticker symbol
- * @param ticker - Cryptocurrency ticker (e.g., "ALGO", "BTC", "ETH")
+ * @param ticker - Cryptocurrency ticker (e.g., "ALGO", "BTC")
  * @returns Icon URL or empty string while loading
  */
 export async function getCryptoIconAsync(ticker: string): Promise<string> {
-  const normalizedTicker = ticker.toLowerCase()
+  const normalizedTicker = ticker.toUpperCase()
   
   // Check cache first
   if (iconCache.has(normalizedTicker)) {
     return iconCache.get(normalizedTicker)!
   }
   
-  const iconPath = `/src/data/cryptoicons/64/${normalizedTicker}.png`
-  const iconLoader = iconModules[iconPath]
+  const path = tickerToPathMap.get(normalizedTicker)
   
-  if (iconLoader) {
+  if (path && iconModules[path]) {
     try {
-      const module = await iconLoader()
+      const loader = iconModules[path]
+      const module = await loader()
       iconCache.set(normalizedTicker, module.default)
       return module.default
     } catch {
@@ -38,17 +66,16 @@ export async function getCryptoIconAsync(ticker: string): Promise<string> {
     }
   }
 
-  // Fallback to default icon
-  return getDefaultCryptoIconAsync()
+  return ''
 }
 
 /**
- * Synchronous version - returns cached icon or placeholder
+ * Synchronous version - returns cached icon or empty string
  * @param ticker - Cryptocurrency ticker
  * @returns Cached icon URL or empty string
  */
 export function getCryptoIcon(ticker: string): string {
-  const normalizedTicker = ticker.toLowerCase()
+  const normalizedTicker = ticker.toUpperCase()
   
   // Return from cache if available
   if (iconCache.has(normalizedTicker)) {
@@ -63,28 +90,12 @@ export function getCryptoIcon(ticker: string): string {
 }
 
 /**
- * Get default cryptocurrency icon for fallback
- * @returns Default icon URL
- */
-async function getDefaultCryptoIconAsync(): Promise<string> {
-  const defaultPath = '/src/data/cryptoicons/64/generic.png'
-  const loader = iconModules[defaultPath]
-  if (loader) {
-    const module = await loader()
-    return module.default
-  }
-  return ''
-}
-
-/**
  * Check if an icon exists for a given ticker
  * @param ticker - Cryptocurrency ticker
  * @returns True if icon exists
  */
 export function hasIcon(ticker: string): boolean {
-  const normalizedTicker = ticker.toLowerCase()
-  const iconPath = `/src/data/cryptoicons/64/${normalizedTicker}.png`
-  return !!iconModules[iconPath]
+  return tickerToPathMap.has(ticker.toUpperCase())
 }
 
 /**
@@ -97,11 +108,8 @@ export async function preloadIcons(tickers: string[]): Promise<void> {
 
 /**
  * Get all available ticker symbols that have icons
- * @returns Array of lowercase ticker symbols
+ * @returns Array of ticker symbols
  */
 export function getAvailableTickers(): string[] {
-  return Object.keys(iconModules).map(path => {
-    const filename = path.split('/').pop()?.replace('.png', '')
-    return filename || ''
-  }).filter(Boolean)
+  return Array.from(tickerToPathMap.keys())
 }

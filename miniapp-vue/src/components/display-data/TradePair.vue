@@ -28,6 +28,13 @@ const handleClick = () => {
 
 const symbol = computed(() => getTradingPairSymbol(props.pair))
 
+const formatPrice = computed(() => {
+  return props.pair.current_price.toLocaleString('en-US', {
+    maximumSignificantDigits: 8,
+    useGrouping: false,
+  })
+})
+
 const formatVolume = computed(() => {
   const vol = props.pair.daily_volume
   if (vol >= 1000000) return `$${(vol / 1000000).toFixed(1)}M`
@@ -38,14 +45,14 @@ const formatVolume = computed(() => {
 
 <template>
   <div
-    class="flex items-center gap-3 w-full p-3 rounded-xl transition-all duration-300 bg-white/5 ring-1 max-w-full overflow-hidden"
+    class="flex items-center gap-4 w-full p-4 rounded-2xl transition-all duration-300 bg-white/5 ring-1 max-w-[calc(100%-1rem)] mx-2 overflow-hidden"
     :class="{
       'cursor-pointer': selectable,
       'hover:shadow-lg': selectable,
       'hover:shadow-purple-500/30': selectable,
       'hover:ring-purple-500/50': selectable,
       'ring-purple-500': selected,
-      'shadow-lg': selected,
+      'shadow-xl': selected,
       'shadow-purple-500/40': selected,
       'ring-white/10': !selected,
     }"
@@ -57,18 +64,22 @@ const formatVolume = computed(() => {
       size="small"
     />
 
-    <div class="font-bold text-sm flex-shrink-0 w-[75px] truncate ml-1">
-      {{ symbol }}
+    <div class="flex items-center flex-shrink-0 w-[90px] ml-1">
+      <span class="text-sm font-bold text-gray-100">{{ pair.base_asset.ticker }}</span>
+      <span class="text-xs text-gray-500 mx-1 font-medium">/</span>
+      <span class="text-xs text-gray-400 font-medium">{{ pair.quote_asset.ticker }}</span>
     </div>
 
-    <div class="font-mono text-xs flex-1 min-w-0 truncate text-center">
-      {{ pair.current_price.toFixed(6) }}
+    <div class="font-mono text-sm flex-1 min-w-0 text-right">
+      {{ formatPrice }}
     </div>
 
-    <div class="text-xs text-gray-400 flex-shrink-0 text-right">
+    <div class="text-sm font-medium text-gray-300 flex-shrink-0 w-[70px] text-right">
       {{ formatVolume }}
     </div>
 
-    <div class="text-xs text-gray-400 flex-shrink-0 text-right">{{ pair.listing_count }} DEX</div>
+    <div class="text-xs font-semibold text-gray-400 flex-shrink-0 w-[30px] text-right">
+      {{ pair.listing_count }}
+    </div>
   </div>
 </template>
