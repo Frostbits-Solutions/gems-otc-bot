@@ -97,9 +97,34 @@ export const useTradingPairsStore = defineStore('tradingPairs', () => {
    * @returns TradingPair or undefined if not found
    */
   function findPair(baseAsaId: number, quoteAsaId: number): TradingPair | undefined {
-    return pairs.value.find(
+    // 1. Try to find the exact pair
+    const exactPair = pairs.value.find(
       (pair) => pair.base_asset.asa_id === baseAsaId && pair.quote_asset.asa_id === quoteAsaId
     )
+    if (exactPair) return exactPair
+
+    // 2. Fallback: check if the inverse pair exists
+    const inversePair = pairs.value.find(
+      (pair) => pair.base_asset.asa_id === quoteAsaId && pair.quote_asset.asa_id === baseAsaId
+    )
+
+    if (inversePair) {
+      // Create a default pair with null ratio and 0 listings
+      const baseAsset = getCurrencyByAsaId(baseAsaId)
+      const quoteAsset = getCurrencyByAsaId(quoteAsaId)
+
+      if (baseAsset && quoteAsset) {
+        return {
+          base_asset: baseAsset,
+          quote_asset: quoteAsset,
+          current_price: null,
+          listing_count: 0,
+          daily_volume: 0
+        }
+      }
+    }
+
+    return undefined
   }
 
   return {

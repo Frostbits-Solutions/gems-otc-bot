@@ -19,7 +19,7 @@ export interface TradingPair {
    * Current market price - lowest available ratio of base/quote
    * High precision decimal value (e.g., 0.000123456789)
    */
-  current_price: number
+  current_price: number | null
 
   /**
    * 24-hour trading volume for this pair (in quote asset units)

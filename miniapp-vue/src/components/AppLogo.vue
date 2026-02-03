@@ -10,12 +10,12 @@ const size = 200
 
 // Text settings
 const text = '• GEMS • APP • TRADE '
-const fontSize = 24 // px
+const fontSize = 19 // px
 const letterSpacing = 0.2 // em
 const fontFamily = "'Archivo Black', sans-serif"
 
 // Circle settings
-const circleRadius = 60 // Distance from center (smaller = closer to logo)
+const circleRadius = 52 // Distance from center (smaller = closer to logo)
 
 // Gradient colors (purple to blue)
 const gradientStart = '#a855f7' // Purple

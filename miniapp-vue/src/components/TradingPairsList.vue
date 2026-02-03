@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useTradingPairsStore } from '@/stores/tradingPairs'
 import TradePair from '@/components/display-data/TradePair.vue'
 import type { TradingPair } from '@/models/crypto'
@@ -16,7 +17,7 @@ const props = withDefaults(
 )
 
 const store = useTradingPairsStore()
-const selectedPairKey = ref<string | null>(null)
+const router = useRouter()
 
 const displayedPairs = computed(() => {
   return store.pairs.slice(0, props.maxItems)
@@ -24,12 +25,16 @@ const displayedPairs = computed(() => {
 
 const getPairKey = (pair: TradingPair) => `${pair.base_asset.asa_id}-${pair.quote_asset.asa_id}`
 
-const isSelected = (pair: TradingPair) => getPairKey(pair) === selectedPairKey.value
+const isSelected = (pair: TradingPair) => false
 
 const handleSelect = (pair: TradingPair) => {
-  if (!props.selectable) return
-  const key = getPairKey(pair)
-  selectedPairKey.value = selectedPairKey.value === key ? null : key
+  router.push({
+    path: '/offer',
+    query: {
+      baseId: pair.base_asset.asa_id.toString(),
+      quoteId: pair.quote_asset.asa_id.toString(),
+    },
+  })
 }
 
 onMounted(async () => {
@@ -85,7 +90,7 @@ onMounted(async () => {
     </div>
 
     <!-- Trading Pairs List -->
-    <div v-else class="flex flex-col gap-3 flex-grow items-center py-2 w-full">
+    <div v-else class="flex flex-col gap-3 flex-grow items-center py-8 w-full">
       <!-- Column Headers -->
       <div
         class="flex items-center gap-4 w-full px-6 text-[11px] text-gray-500 uppercase tracking-wider mb-1"

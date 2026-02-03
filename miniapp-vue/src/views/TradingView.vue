@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 import { useTradingPairsStore } from '@/stores/tradingPairs'
 import TradePair from '@/components/display-data/TradePair.vue'
+import AppFooter from '@/components/navigation/AppFooter.vue'
 
 const store = useTradingPairsStore()
 
@@ -86,5 +87,8 @@ onMounted(async () => {
         </p>
       </div>
     </div>
+
+    <!-- App Footer -->
+    <AppFooter :showGoBack="true" />
   </div>
 </template>
