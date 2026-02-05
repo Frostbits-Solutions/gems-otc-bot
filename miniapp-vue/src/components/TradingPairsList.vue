@@ -47,16 +47,32 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col flex-grow">
     <!-- Stats Header -->
-    <div class="flex justify-center gap-6 mb-4">
-      <span class="text-sm text-[var(--tg-theme-hint-color,#9ca3af)] font-medium">
+    <div class="flex justify-center gap-6 mb-4 px-6 h-7">
+      <span
+        class="flex items-center text-sm text-[var(--tg-theme-hint-color,#9ca3af)] font-medium gap-1"
+      >
+        <UIcon
+          v-if="store.loading"
+          name="i-heroicons-arrow-path"
+          class="w-4 h-4 animate-spin mr-1 text-[#667eea]"
+        />
         <strong
+          v-else
           class="text-lg bg-gradient-to-br from-[#667eea] to-[#764ba2] bg-clip-text text-transparent font-bold mr-1"
           >{{ store.pairCount }}</strong
         >
         Pairs
       </span>
-      <span class="text-sm text-[var(--tg-theme-hint-color,#9ca3af)] font-medium">
+      <span
+        class="flex items-center text-sm text-[var(--tg-theme-hint-color,#9ca3af)] font-medium gap-1"
+      >
+        <UIcon
+          v-if="store.loading"
+          name="i-heroicons-arrow-path"
+          class="w-4 h-4 animate-spin mr-1 text-[#667eea]"
+        />
         <strong
+          v-else
           class="text-lg bg-gradient-to-br from-[#667eea] to-[#764ba2] bg-clip-text text-transparent font-bold mr-1"
           >{{ store.currencyCount }}</strong
         >

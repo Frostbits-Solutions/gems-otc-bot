@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { useTelegramStore } from './stores/telegram'
+import KeyboardAccessoryBar from '@/components/navigation/KeyboardAccessoryBar.vue'
 
 const telegramStore = useTelegramStore()
 
@@ -12,6 +13,7 @@ if (telegramStore.tg) {
 <template>
   <UApp>
     <RouterView />
+    <KeyboardAccessoryBar />
   </UApp>
 </template>
 

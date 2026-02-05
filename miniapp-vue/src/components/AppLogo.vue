@@ -9,8 +9,8 @@
 const size = 200
 
 // Text settings
-const text = '• GEMS • APP • TRADE '
-const fontSize = 19 // px
+const text = '• GEMS • OTC • P2P '
+const fontSize = 22 // px
 const letterSpacing = 0.2 // em
 const fontFamily = "'Archivo Black', sans-serif"
 

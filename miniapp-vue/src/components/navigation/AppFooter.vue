@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useTelegramStore } from '@/stores/telegram'
+import { useKeyboard } from '@/composables/useKeyboard'
 
 interface Props {
   showGoBack?: boolean
@@ -12,6 +13,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const router = useRouter()
 const telegramStore = useTelegramStore()
+const { isKeyboardVisible } = useKeyboard()
 
 const handleBack = () => {
   router.push('/')
@@ -28,9 +30,18 @@ const handleClose = () => {
 </script>
 
 <template>
-  <div class="z-50">
+  <div class="z-50 pointer-events-none">
+    <!-- Bottom Gradient Overlay -->
+    <div
+      v-if="!isKeyboardVisible"
+      class="fixed bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent transition-opacity duration-300 pointer-events-none"
+    />
+
     <!-- Back Button (Bottom Left) -->
-    <div v-if="showGoBack" class="fixed bottom-4 left-4 animate-fade-in">
+    <div
+      v-if="showGoBack && !isKeyboardVisible"
+      class="fixed bottom-4 left-4 animate-fade-in pointer-events-auto"
+    >
       <UButton
         icon="i-heroicons-arrow-left"
         size="md"
@@ -42,7 +53,7 @@ const handleClose = () => {
     </div>
 
     <!-- Close Button (Bottom Right) -->
-    <div class="fixed bottom-4 right-4">
+    <div v-if="!isKeyboardVisible" class="fixed bottom-4 right-4 pointer-events-auto">
       <UButton
         icon="i-heroicons-x-mark"
         size="md"

@@ -158,6 +158,7 @@ const isValidOrder = computed(() => {
         size="xl"
         :disabled="!isValidOrder"
         color="neutral"
+        variant="ghost"
         :class="[
           'relative z-10 w-full h-full text-white font-bold rounded-[10px] transition-all duration-300',
           isValidOrder
