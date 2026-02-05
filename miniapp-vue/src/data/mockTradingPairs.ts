@@ -270,6 +270,39 @@ export const mockTradingPairs: TradingPair[] = [
   }
 ]
 
+// Generate additional mock pairs for stress testing (500+)
+const extraPool: AlgorandAsset[] = [
+  ALGO, USDC, USDT, goBTC, goETH, xSOL, OPUL, DEFLY, YLDY, GARD, HDL, COOP, GEMS, XET, SMILE, PEPE, aDOGE, aSHIB
+]
+
+function generateExtraPairs(count: number): TradingPair[] {
+  const generated: TradingPair[] = []
+  const existingPairs = new Set(mockTradingPairs.map(p => `${p.base_asset.asa_id}-${p.quote_asset.asa_id}`))
+
+  for (let i = 0; i < count; i++) {
+    const baseIndex = Math.floor(Math.random() * extraPool.length)
+    const quoteIndex = Math.floor(Math.random() * extraPool.length)
+    const base = extraPool[baseIndex] as AlgorandAsset
+    const quote = extraPool[quoteIndex] as AlgorandAsset
+    
+    if (base.asa_id === quote.asa_id) continue
+    const key = `${base.asa_id}-${quote.asa_id}`
+    if (existingPairs.has(key)) continue
+
+    generated.push({
+      base_asset: base,
+      quote_asset: quote,
+      current_price: Math.random() * 1000 + 0.0001,
+      daily_volume: Math.random() * 5000000,
+      listing_count: Math.floor(Math.random() * 10) + 1
+    })
+    existingPairs.add(key)
+  }
+  return generated
+}
+
+const allPairs = [...mockTradingPairs, ...generateExtraPairs(550)]
+
 /**
  * Simulate API delay for fetching trading pairs
  * @param delayMs - Delay in milliseconds (default: 500ms)
@@ -278,7 +311,7 @@ export const mockTradingPairs: TradingPair[] = [
 export async function fetchMockTradingPairs(delayMs: number = 500): Promise<TradingPair[]> {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve([...mockTradingPairs])
+      resolve([...allPairs])
     }, delayMs)
   })
 }

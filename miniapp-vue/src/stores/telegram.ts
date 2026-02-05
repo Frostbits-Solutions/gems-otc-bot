@@ -39,6 +39,21 @@ interface TelegramStoreState {
    * @note Available from Bot API 8.0+
    */
   isActive: Ref<boolean | undefined>
+
+  /**
+   * The current height of the visible area of the Mini App.
+   */
+  viewportHeight: Ref<number>
+
+  /**
+   * The height of the visible area of the Mini App in its stable state.
+   */
+  viewportStableHeight: Ref<number>
+
+  /**
+   * True if the Mini App is expanded to the maximum available height.
+   */
+  isExpanded: Ref<boolean>
 }
 
 /**
@@ -62,7 +77,19 @@ export const useTelegramStore = defineStore('telegram', () => {
     initDataUnsafe: ref<WebAppInitData | undefined>(tg?.initDataUnsafe),
     version: ref<string | undefined>(tg?.version),
     platform: ref<string | undefined>(tg?.platform),
-    isActive: ref<boolean | undefined>(tg?.isActive)
+    isActive: ref<boolean | undefined>(tg?.isActive),
+    viewportHeight: ref<number>(tg?.viewportHeight || window.innerHeight),
+    viewportStableHeight: ref<number>(tg?.viewportStableHeight || window.innerHeight),
+    isExpanded: ref<boolean>(tg?.isExpanded || false),
+  }
+
+  // Handle viewport changes
+  if (tg) {
+    tg.onEvent('viewportChanged', () => {
+      state.viewportHeight.value = tg.viewportHeight
+      state.viewportStableHeight.value = tg.viewportStableHeight
+      state.isExpanded.value = tg.isExpanded
+    })
   }
 
   return {

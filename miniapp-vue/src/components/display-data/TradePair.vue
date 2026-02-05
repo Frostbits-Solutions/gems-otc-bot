@@ -10,11 +10,13 @@ const props = withDefaults(
     selectable?: boolean
     selected?: boolean
     mode?: 'inlined' | 'header'
+    fullWidth?: boolean
   }>(),
   {
     selectable: false,
     selected: false,
     mode: 'inlined',
+    fullWidth: false,
   },
 )
 
@@ -110,7 +112,7 @@ const formatVolume = computed(() => {
   <!-- Inlined Mode (Default) -->
   <div
     v-else
-    class="flex items-center gap-4 w-full p-4 rounded-2xl transition-all duration-300 bg-white/5 ring-1 max-w-[calc(100%-1rem)] mx-2 overflow-hidden"
+    class="flex items-center gap-4 w-full p-4 rounded-2xl transition-all duration-300 bg-white/5 ring-1 overflow-hidden"
     :class="{
       'cursor-pointer': selectable,
       'hover:shadow-lg': selectable,
@@ -118,6 +120,7 @@ const formatVolume = computed(() => {
       'hover:ring-purple-500/50': selectable,
       'ring-white/10': !selected,
       '!ring-brand-primary shadow-xl shadow-brand-primary/20': selected,
+      'max-w-[calc(100%-1rem)] mx-2': !fullWidth,
     }"
     @click="handleClick"
   >
@@ -127,21 +130,23 @@ const formatVolume = computed(() => {
       size="small"
     />
 
-    <div class="flex items-center flex-shrink-0 w-[90px] ml-1">
+    <div class="flex items-center flex-shrink-0 w-[80px] ml-1">
       <span class="text-sm font-bold text-gray-100">{{ pair.base_asset.ticker }}</span>
       <span class="text-xs text-gray-500 mx-1 font-medium">/</span>
       <span class="text-xs text-gray-400 font-medium">{{ pair.quote_asset.ticker }}</span>
     </div>
 
-    <div class="font-mono text-sm flex-1 min-w-0 text-right">
+    <div
+      class="font-mono text-sm flex-1 min-w-0 text-right overflow-hidden text-ellipsis whitespace-nowrap"
+    >
       {{ formatPrice }}
     </div>
 
-    <div class="text-sm font-medium text-gray-300 flex-shrink-0 w-[70px] text-right">
+    <div class="text-sm font-medium text-gray-300 flex-shrink-0 w-[85px] text-right">
       {{ formatVolume }}
     </div>
 
-    <div class="text-xs font-semibold text-gray-400 flex-shrink-0 w-[30px] text-right">
+    <div class="text-xs font-semibold text-gray-400 flex-shrink-0 w-[25px] text-right">
       {{ pair.listing_count }}
     </div>
   </div>
