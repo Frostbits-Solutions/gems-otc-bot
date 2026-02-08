@@ -47,6 +47,14 @@ const formatVolume = computed(() => {
   if (vol >= 1000) return `$${(vol / 1000).toFixed(1)}K`
   return `$${vol.toFixed(0)}`
 })
+
+const priceFontSizeClass = computed(() => {
+  const len = formatPrice.value.length
+  if (len <= 8) return 'text-sm'
+  if (len <= 10) return 'text-[12px]'
+  if (len <= 12) return 'text-[11px]'
+  return 'text-[10px]'
+})
 </script>
 
 <template>
@@ -86,7 +94,11 @@ const formatVolume = computed(() => {
     <div class="grid grid-cols-3 gap-3">
       <div class="flex flex-col gap-0.5">
         <span class="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Price</span>
-        <span class="text-base font-mono font-bold text-brand-primary">
+        <span
+          class="font-mono font-bold text-brand-primary tracking-tight transition-all duration-300"
+          :class="[mode === 'header' ? 'text-base' : priceFontSizeClass]"
+          style="font-variant-numeric: tabular-nums"
+        >
           {{ formatPrice }}
         </span>
       </div>
@@ -95,14 +107,14 @@ const formatVolume = computed(() => {
         <span class="text-[10px] font-medium text-gray-500 uppercase tracking-wider"
           >Volume (24h)</span
         >
-        <span class="text-base font-bold text-gray-200">
+        <span class="text-base font-bold text-gray-200 tracking-tight tabular-nums">
           {{ formatVolume }}
         </span>
       </div>
 
       <div class="flex flex-col gap-0.5">
         <span class="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Listings</span>
-        <span class="text-base font-bold text-gray-200">
+        <span class="text-base font-bold text-gray-200 tabular-nums">
           {{ pair.listing_count }}
         </span>
       </div>
@@ -112,7 +124,7 @@ const formatVolume = computed(() => {
   <!-- Inlined Mode (Default) -->
   <div
     v-else
-    class="flex items-center gap-4 w-full p-4 rounded-2xl transition-all duration-300 bg-white/5 ring-1 overflow-hidden"
+    class="flex items-center gap-2 w-full px-3 py-4 rounded-2xl transition-all duration-300 bg-white/5 ring-1 overflow-hidden"
     :class="{
       'cursor-pointer': selectable,
       'hover:shadow-lg': selectable,
@@ -130,23 +142,30 @@ const formatVolume = computed(() => {
       size="small"
     />
 
-    <div class="flex items-center flex-shrink-0 w-[80px] ml-1">
-      <span class="text-sm font-bold text-gray-100">{{ pair.base_asset.ticker }}</span>
-      <span class="text-xs text-gray-500 mx-1 font-medium">/</span>
-      <span class="text-xs text-gray-400 font-medium">{{ pair.quote_asset.ticker }}</span>
+    <div class="flex items-center flex-shrink-0 w-[70px] ml-1">
+      <span class="text-[13px] font-bold text-gray-100">{{ pair.base_asset.ticker }}</span>
+      <span class="text-[10px] text-gray-500 mx-0.5 font-medium">/</span>
+      <span class="text-[11px] text-gray-400 font-medium">{{ pair.quote_asset.ticker }}</span>
     </div>
 
     <div
-      class="font-mono text-sm flex-1 min-w-0 text-right overflow-hidden text-ellipsis whitespace-nowrap"
+      class="font-mono flex-1 min-w-0 text-right overflow-hidden text-ellipsis whitespace-nowrap tracking-tighter transition-all duration-300"
+      :class="priceFontSizeClass"
+      style="font-variant-numeric: tabular-nums"
     >
       {{ formatPrice }}
     </div>
 
-    <div class="text-sm font-medium text-gray-300 flex-shrink-0 w-[85px] text-right">
+    <div
+      class="text-[13px] font-medium text-gray-300 flex-shrink-0 w-[80px] text-right tracking-tight"
+      style="font-variant-numeric: tabular-nums"
+    >
       {{ formatVolume }}
     </div>
 
-    <div class="text-xs font-semibold text-gray-400 flex-shrink-0 w-[25px] text-right">
+    <div
+      class="text-[11px] font-semibold text-gray-400 flex-shrink-0 w-[22px] text-right tabular-nums"
+    >
       {{ pair.listing_count }}
     </div>
   </div>

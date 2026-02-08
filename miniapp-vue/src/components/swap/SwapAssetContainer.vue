@@ -40,6 +40,16 @@ const handleInput = (event: Event) => {
   input.value = filtered
   emit('update:amount', filtered)
 }
+
+const inputFontSizeClass = computed(() => {
+  const amountStr = String(props.amount)
+  const len = amountStr.length
+  if (len <= 10) return 'text-3xl'
+  if (len <= 12) return 'text-2xl'
+  if (len <= 15) return 'text-xl'
+  if (len <= 18) return 'text-lg'
+  return 'text-base' // Minimum size font
+})
 </script>
 
 <template>
@@ -59,7 +69,8 @@ const handleInput = (event: Event) => {
         @input="handleInput"
         :readonly="readonly"
         placeholder="0.0"
-        class="bg-transparent text-3xl font-bold text-white placeholder-gray-600 outline-none w-full min-w-0"
+        class="bg-transparent font-bold text-white placeholder-gray-600 outline-none w-full min-w-0 transition-all duration-200"
+        :class="inputFontSizeClass"
       />
 
       <!-- Asset Pill -->

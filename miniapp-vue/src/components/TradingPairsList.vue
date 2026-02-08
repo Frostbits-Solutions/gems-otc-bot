@@ -109,13 +109,13 @@ onMounted(async () => {
     <div v-else class="flex flex-col gap-3 flex-grow items-center py-8 w-full">
       <!-- Column Headers -->
       <div
-        class="flex items-center gap-4 w-full px-6 text-[11px] text-gray-500 uppercase tracking-wider mb-1"
+        class="flex items-center gap-2 w-full px-3 text-[10px] text-gray-500 uppercase tracking-widest mb-1 opacity-80 max-w-[calc(100%-1rem)] mx-2"
       >
-        <div class="w-[52px]"></div>
-        <div class="w-[110px] ml-1">Pair</div>
+        <div class="w-[56px]"></div>
+        <div class="w-[70px]">Pair</div>
         <div class="flex-1 text-right">Price</div>
-        <div class="w-[70px] text-right">Vol</div>
-        <div class="w-[50px] text-right">Count</div>
+        <div class="w-[80px] text-right">Vol</div>
+        <div class="w-[22px] text-right pr-0.5">#</div>
       </div>
 
       <TradePair

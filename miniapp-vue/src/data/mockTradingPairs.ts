@@ -118,7 +118,7 @@ export const mockTradingPairs: TradingPair[] = [
   {
     base_asset: goBTC,
     quote_asset: ALGO,
-    current_price: 170567.89,  // BTC in ALGO terms
+    current_price: 170567.89234567,  // BTC in ALGO terms (Longer for stress test)
     daily_volume: 2456789.12345,
     listing_count: 8
   },
