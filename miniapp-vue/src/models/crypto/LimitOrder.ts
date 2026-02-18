@@ -61,6 +61,11 @@ export class LimitOrder {
    * @returns OrderStatus.BUY if ratio >= market price, otherwise DEMAND
    */
   private computeStatus(): OrderStatus {
+    // default fallback if it's non existing pair
+    if (this.pair.current_price === null) {
+      return OrderStatus.DEMAND
+    }
+
     return this.price_ratio >= this.pair.current_price ? OrderStatus.BUY : OrderStatus.DEMAND
   }
 
@@ -69,6 +74,9 @@ export class LimitOrder {
    * @param baseAmount - Amount of base asset to buy
    */
   updateQuoteFromBase(baseAmount: number): void {
+    if (this.pair.current_price === null) {
+      return
+    }
     this.base_amount = baseAmount
     this.quote_amount = baseAmount * this.pair.current_price
     this.price_ratio = this.pair.current_price
@@ -80,6 +88,9 @@ export class LimitOrder {
    * @param quoteAmount - Amount of quote asset to spend
    */
   updateBaseFromQuote(quoteAmount: number): void {
+    if (this.pair.current_price === null) {
+      return
+    }
     this.quote_amount = quoteAmount
     this.base_amount = quoteAmount / this.pair.current_price
     this.price_ratio = this.pair.current_price
@@ -123,6 +134,9 @@ export class LimitOrder {
    * @returns Percentage difference (positive = above market, negative = below market)
    */
   getPriceDifferencePercent(): number {
+    if (this.pair.current_price === null) {
+      return 0
+    }
     return ((this.price_ratio - this.pair.current_price) / this.pair.current_price) * 100
   }
 
@@ -134,14 +148,4 @@ export class LimitOrder {
     return this.base_amount !== null && this.quote_amount !== null
   }
 
-  
-  /**
-   * Create a market order at current price
-   * @param pair - Trading pair
-   * @param baseAmount - Amount of base asset to buy
-   * @returns New LimitOrder instance with BUY status
-   */
-  static emptyLimitOrder(pair: TradingPair): LimitOrder {
-    return new LimitOrder(pair, pair.current_price, null, null)
-  }
 }

@@ -2,13 +2,10 @@
 import { useTelegramStore } from '../stores/telegram'
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
+import AppFooter from '../components/navigation/AppFooter.vue'
 
 const telegramStore = useTelegramStore()
 const router = useRouter()
-
-const goBack = () => {
-  router.push('/')
-}
 
 // Format JSON for display
 const formatJson = (obj: any) => {
@@ -23,7 +20,8 @@ const storeData = computed(() => ({
   version: telegramStore.version || 'Not available',
   isActive: telegramStore.isActive !== undefined ? telegramStore.isActive : 'Not available',
   colorScheme: telegramStore.tg?.colorScheme || 'Not available',
-  isExpanded: telegramStore.tg?.isExpanded !== undefined ? telegramStore.tg.isExpanded : 'Not available',
+  isExpanded:
+    telegramStore.tg?.isExpanded !== undefined ? telegramStore.tg.isExpanded : 'Not available',
   viewportHeight: telegramStore.tg?.viewportHeight || 'Not available',
   viewportStableHeight: telegramStore.tg?.viewportStableHeight || 'Not available',
 }))
@@ -31,8 +29,6 @@ const storeData = computed(() => ({
 
 <template>
   <div class="dev-container">
-    <button @click="goBack" class="back-btn">← Back to Home</button>
-    
     <div class="dev-header">
       <h1>🔧 Dev: Telegram App Data</h1>
       <p class="subtitle">Telegram Mini App Store Inspector</p>
@@ -163,7 +159,9 @@ const storeData = computed(() => ({
         </div>
         <div class="data-item">
           <span class="label">Auth Date:</span>
-          <span class="value">{{ new Date(telegramStore.initDataUnsafe.auth_date * 1000).toLocaleString() }}</span>
+          <span class="value">{{
+            new Date(telegramStore.initDataUnsafe.auth_date * 1000).toLocaleString()
+          }}</span>
         </div>
         <div class="data-item">
           <span class="label">Hash:</span>
@@ -203,11 +201,17 @@ const storeData = computed(() => ({
         Always validate this data on your backend before trusting it.
       </p>
       <p>
-        <a href="https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app" target="_blank">
+        <a
+          href="https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app"
+          target="_blank"
+        >
           Learn more about data validation →
         </a>
       </p>
     </div>
+
+    <!-- App Footer -->
+    <AppFooter :showGoBack="true" />
   </div>
 </template>
 
@@ -216,29 +220,11 @@ const storeData = computed(() => ({
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  padding-bottom: 80px; /* Space for footer */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--tg-theme-bg-color, #1a1b26);
   color: var(--tg-theme-text-color, #ffffff);
   min-height: 100vh;
-}
-
-.back-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
-.back-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
 }
 
 .dev-header {
@@ -322,12 +308,17 @@ const storeData = computed(() => ({
 }
 
 .value.active {
-  color: #4CAF50;
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.value.active {
+  color: #4caf50;
   font-weight: bold;
 }
 
 .value.premium {
-  color: #FFD700;
+  color: #ffd700;
   font-weight: bold;
 }
 
@@ -427,6 +418,7 @@ const storeData = computed(() => ({
 @media (max-width: 768px) {
   .dev-container {
     padding: 15px;
+    padding-bottom: 70px;
   }
 
   .data-grid {

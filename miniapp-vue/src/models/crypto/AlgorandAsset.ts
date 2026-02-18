@@ -12,11 +12,7 @@ export interface AlgorandAsset {
 
   /**
    * Trading ticker symbol (e.g., "ETH", "ALGO", "USDC")
+   * Used to dynamically load icon via getCryptoIcon(ticker)
    */
   ticker: string
-
-  /**
-   * URL to asset icon/logo (JPEG, PNG, or SVG format)
-   */
-  icon_url: string
 }
