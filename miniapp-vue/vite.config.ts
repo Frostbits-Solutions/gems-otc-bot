@@ -18,14 +18,5 @@ export default defineConfig({
   build: {
     // Ensure assets are properly referenced
     assetsDir: 'assets',
-    // Generate a single HTML file
-    rollupOptions: {
-      output: {
-        // Ensure consistent file naming
-        entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]',
-      },
-    },
   },
 })

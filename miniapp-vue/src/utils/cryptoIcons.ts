@@ -5,9 +5,9 @@
 
 // Load all PNG icons lazily (not eager) - only loads when needed
 // Updated to source from asa-list assets
-const iconModules = import.meta.glob<{ default: string }>(
+const iconModules = import.meta.glob<string>(
   '@/data/asa-list/assets/**/*.{png,svg}',
-  { eager: false }
+  { eager: true, query: '?url', import: 'default' }
 )
 
 // Map<Ticker, FilePath> to store standardized paths
@@ -57,10 +57,9 @@ export async function getCryptoIconAsync(ticker: string): Promise<string> {
   
   if (path && iconModules[path]) {
     try {
-      const loader = iconModules[path]
-      const module = await loader()
-      iconCache.set(normalizedTicker, module.default)
-      return module.default
+      const url = iconModules[path]
+      iconCache.set(normalizedTicker, url)
+      return url
     } catch {
       console.warn(`Failed to load icon for ticker: ${ticker}`)
     }
