@@ -8,15 +8,11 @@ import ui from '@nuxt/ui/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueJsx(),
-    vueDevTools(),
-    ui(),
-  ],
+  base: '/gems-otc-bot/',
+  plugins: [vue(), vueJsx(), vueDevTools(), ui()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
   build: {
@@ -28,8 +24,8 @@ export default defineConfig({
         // Ensure consistent file naming
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]'
-      }
-    }
-  }
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      },
+    },
+  },
 })
