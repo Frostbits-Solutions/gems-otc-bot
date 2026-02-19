@@ -1,114 +1,56 @@
 /**
- * Utility for loading cryptocurrency icons using Vite's import.meta.glob
- * Uses lazy loading to reduce bundle size
+ * Utility for loading cryptocurrency icons from the ASA List CDN.
+ * Icons are fetched dynamically by asset ID from:
+ * https://asa-list.tinyman.org/assets/{assetId}/icon.png
+ *
+ * No local package dependency required - icons are served from the CDN.
  */
 
-// Load all PNG icons lazily (not eager) - only loads when needed
-// Updated to source from asa-list assets
-const iconModules = import.meta.glob<string>(
-  '@/data/asa-list/assets/**/*.{png,svg}',
-  { eager: true, query: '?url', import: 'default' }
-)
+const ASA_ICON_BASE_URL = 'https://asa-list.tinyman.org/assets'
 
-// Map<Ticker, FilePath> to store standardized paths
-const tickerToPathMap = new Map<string, string>()
-
-// Populate the map on module load
-Object.keys(iconModules).forEach((path) => {
-  const parts = path.split('/')
-  // Safety checks
-  if (parts.length < 2) return
-  const folder = parts[parts.length - 2]
-  if (!folder) return
-
-  // Logic: Extract ticker from folder name
-  // Folder format is either "TICKER" or "TICKER-ASAID"
-  let ticker = folder
-  const lastHyphenIndex = folder.lastIndexOf('-')
-  
-  if (lastHyphenIndex > 0) {
-    const potentialId = folder.substring(lastHyphenIndex + 1)
-    if (/^\d+$/.test(potentialId)) {
-      ticker = folder.substring(0, lastHyphenIndex)
-    }
-  }
-
-  // Normalize to uppercase for case-insensitive lookup
-  tickerToPathMap.set(ticker.toUpperCase(), path)
-})
-
-// Cache for loaded icon URLs
-const iconCache = new Map<string, string>()
+// Cache for icon URLs keyed by asset ID
+const iconCache = new Map<number, string>()
 
 /**
- * Get the icon URL for a cryptocurrency by ticker symbol
- * @param ticker - Cryptocurrency ticker (e.g., "ALGO", "BTC")
- * @returns Icon URL or empty string while loading
+ * Get the icon URL for an Algorand asset by its ASA ID.
+ * Returns the PNG icon URL from the Tinyman ASA list CDN.
+ *
+ * @param asaId - Algorand Standard Asset ID (use 0 for ALGO)
+ * @param format - Icon format: 'png' (default) or 'svg'
+ * @returns Icon URL string, or empty string for unknown/invalid IDs
  */
-export async function getCryptoIconAsync(ticker: string): Promise<string> {
-  const normalizedTicker = ticker.toUpperCase()
-  
-  // Check cache first
-  if (iconCache.has(normalizedTicker)) {
-    return iconCache.get(normalizedTicker)!
-  }
-  
-  const path = tickerToPathMap.get(normalizedTicker)
-  
-  if (path && iconModules[path]) {
-    try {
-      const url = iconModules[path]
-      iconCache.set(normalizedTicker, url)
-      return url
-    } catch {
-      console.warn(`Failed to load icon for ticker: ${ticker}`)
-    }
+export function getAssetIconUrl(asaId: number, format: 'png' | 'svg' = 'png'): string {
+  if (asaId === null || asaId === undefined || asaId < 0) return ''
+
+  // ALGO (native token) has a well-known asset ID of 0
+  // It is listed under asset ID 0 on the CDN
+  const cacheKey = asaId
+  if (iconCache.has(cacheKey)) {
+    return iconCache.get(cacheKey)!
   }
 
-  return ''
+  const url = `${ASA_ICON_BASE_URL}/${asaId}/icon.${format}`
+  iconCache.set(cacheKey, url)
+  return url
 }
 
 /**
- * Synchronous version - returns cached icon or empty string
- * @param ticker - Cryptocurrency ticker
- * @returns Cached icon URL or empty string
+ * Get the PNG icon URL for an Algorand asset.
+ * Convenience alias for getAssetIconUrl with format='png'.
+ *
+ * @param asaId - Algorand Standard Asset ID
+ * @returns PNG icon URL string
  */
-export function getCryptoIcon(ticker: string): string {
-  const normalizedTicker = ticker.toUpperCase()
-  
-  // Return from cache if available
-  if (iconCache.has(normalizedTicker)) {
-    return iconCache.get(normalizedTicker)!
-  }
-  
-  // Trigger async load for next time
-  getCryptoIconAsync(ticker)
-  
-  // Return empty string or placeholder while loading
-  return ''
+export function getCryptoIconByAsaId(asaId: number): string {
+  return getAssetIconUrl(asaId, 'png')
 }
 
 /**
- * Check if an icon exists for a given ticker
- * @param ticker - Cryptocurrency ticker
- * @returns True if icon exists
+ * Get the SVG icon URL for an Algorand asset.
+ *
+ * @param asaId - Algorand Standard Asset ID
+ * @returns SVG icon URL string
  */
-export function hasIcon(ticker: string): boolean {
-  return tickerToPathMap.has(ticker.toUpperCase())
-}
-
-/**
- * Preload icons for specific tickers
- * @param tickers - Array of tickers to preload
- */
-export async function preloadIcons(tickers: string[]): Promise<void> {
-  await Promise.all(tickers.map(ticker => getCryptoIconAsync(ticker)))
-}
-
-/**
- * Get all available ticker symbols that have icons
- * @returns Array of ticker symbols
- */
-export function getAvailableTickers(): string[] {
-  return Array.from(tickerToPathMap.keys())
+export function getCryptoIconSvg(asaId: number): string {
+  return getAssetIconUrl(asaId, 'svg')
 }

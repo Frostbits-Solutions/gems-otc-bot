@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { AlgorandAsset } from '@/models/crypto'
-import { getCryptoIconAsync } from '@/utils/cryptoIcons'
-import { ref, watch, onMounted } from 'vue'
+import { getCryptoIconByAsaId } from '@/utils/cryptoIcons'
 
 interface Props {
   asset: AlgorandAsset
@@ -23,14 +22,7 @@ const emit = defineEmits<{
   (e: 'update:amount', value: string): void
 }>()
 
-const iconUrl = ref('')
-
-const loadIcon = async () => {
-  iconUrl.value = await getCryptoIconAsync(props.asset.ticker)
-}
-
-onMounted(loadIcon)
-watch(() => props.asset.ticker, loadIcon)
+const iconUrl = computed(() => getCryptoIconByAsaId(props.asset.asa_id))
 
 const handleInput = (event: Event) => {
   const input = event.target as HTMLInputElement

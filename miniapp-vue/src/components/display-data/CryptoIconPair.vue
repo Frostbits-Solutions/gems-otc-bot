@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
-import { getCryptoIconAsync } from '@/utils/cryptoIcons'
+import { computed } from 'vue'
+import { getCryptoIconByAsaId } from '@/utils/cryptoIcons'
 
 interface Props {
-  baseTicker: string
-  quoteTicker: string
+  baseAsaId: number
+  quoteAsaId: number
   size?: 'small' | 'medium'
   sided?: boolean
 }
@@ -14,32 +14,14 @@ const props = withDefaults(defineProps<Props>(), {
   sided: false,
 })
 
-const baseIcon = ref('')
-const quoteIcon = ref('')
-const loading = ref(true)
-
-const loadIcons = async () => {
-  loading.value = true
-  const [base, quote] = await Promise.all([
-    getCryptoIconAsync(props.baseTicker),
-    getCryptoIconAsync(props.quoteTicker),
-  ])
-  baseIcon.value = base
-  quoteIcon.value = quote
-  loading.value = false
-}
-
-onMounted(loadIcons)
-
-watch([() => props.baseTicker, () => props.quoteTicker], loadIcons)
+const baseIcon = computed(() => getCryptoIconByAsaId(props.baseAsaId))
+const quoteIcon = computed(() => getCryptoIconByAsaId(props.quoteAsaId))
 </script>
 
 <template>
   <div class="icon-pair" :class="[`size-${size}`, { sided }]">
-    <div v-if="loading || !baseIcon" class="icon icon-base skeleton" />
-    <img v-else :src="baseIcon" :alt="baseTicker" class="icon icon-base" />
-    <div v-if="loading || !quoteIcon" class="icon icon-quote skeleton" />
-    <img v-else :src="quoteIcon" :alt="quoteTicker" class="icon icon-quote" />
+    <img :src="baseIcon" alt="" class="icon icon-base" />
+    <img :src="quoteIcon" alt="" class="icon icon-quote" />
   </div>
 </template>
 
@@ -70,7 +52,7 @@ watch([() => props.baseTicker, () => props.quoteTicker], loadIcons)
 
 /* Small size */
 .size-small {
-  width: 44px;
+  width: 52px;
 }
 
 .size-small .icon {
@@ -100,20 +82,5 @@ watch([() => props.baseTicker, () => props.quoteTicker], loadIcons)
 /* Sided mode */
 .sided .icon-quote {
   margin-left: 8px;
-}
-
-/* Skeleton loading */
-.skeleton {
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
 }
 </style>

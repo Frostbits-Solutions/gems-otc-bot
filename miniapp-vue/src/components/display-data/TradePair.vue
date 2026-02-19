@@ -66,8 +66,8 @@ const priceFontSizeClass = computed(() => {
     <div class="flex justify-between items-center">
       <div class="grid grid-cols-[auto_auto_auto] items-center gap-5">
         <CryptoIconPair
-          :baseTicker="pair.base_asset.ticker"
-          :quoteTicker="pair.quote_asset.ticker"
+          :baseAsaId="pair.base_asset.asa_id"
+          :quoteAsaId="pair.quote_asset.asa_id"
           size="small"
         />
 
@@ -137,8 +137,8 @@ const priceFontSizeClass = computed(() => {
     @click="handleClick"
   >
     <CryptoIconPair
-      :baseTicker="pair.base_asset.ticker"
-      :quoteTicker="pair.quote_asset.ticker"
+      :baseAsaId="pair.base_asset.asa_id"
+      :quoteAsaId="pair.quote_asset.asa_id"
       size="small"
     />
 
