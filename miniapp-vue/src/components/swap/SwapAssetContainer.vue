@@ -77,7 +77,7 @@ const inputFontSizeClass = computed(() => {
 
     <!-- USD Value (Mock) -->
     <div class="text-sm text-gray-500 font-medium">
-      USD ${{ (Number(amount || 0) * 1).toFixed(2) }}
+      USD ${{ (Number(amount || 0) * 1).toFixed(2) }} (fake)
     </div>
   </div>
 </template>
