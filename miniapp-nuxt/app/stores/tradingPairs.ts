@@ -1,12 +1,11 @@
 
 import type { TradingPair, AlgorandAsset } from '@/models/crypto'
-import { fetchMockTradingPairs } from '@/data/mockTradingPairs'
 
 export const useTradingPairsStore = defineStore('tradingPairs', () => {
   // State
   const pairs = ref<TradingPair[]>([])
   const currencies = ref<AlgorandAsset[]>([])
-  const loading = ref(false)
+  const loading = ref(true) // Default to true so SSR renders the loading state initially
   const error = ref<string | null>(null)
 
   // Computed: Get number of unique currencies
@@ -40,7 +39,7 @@ export const useTradingPairsStore = defineStore('tradingPairs', () => {
   }
 
   /**
-   * Fetch trading pairs from API (currently using mock data)
+   * Fetch trading pairs from API
    * Automatically extracts unique currencies once after fetch
    */
   async function fetchPairs(): Promise<void> {
@@ -48,7 +47,7 @@ export const useTradingPairsStore = defineStore('tradingPairs', () => {
     error.value = null
 
     try {
-      const data = await fetchMockTradingPairs()
+      const data = await $fetch<TradingPair[]>(API_ROUTES.TRADING_PAIRS)
       pairs.value = data
       // Extract currencies once, not on every access
       currencies.value = extractUniqueCurrencies(data)

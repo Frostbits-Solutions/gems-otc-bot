@@ -34,11 +34,12 @@ const handleSelect = (pair: TradingPair) => {
   });
 };
 
-onMounted(async () => {
+useAsyncData(ASYNC_KEYS.TRADING_PAIRS_FETCH, async () => {
   if (store.pairCount === 0) {
     await store.fetchPairs();
   }
-});
+  return true;
+}, { server: false });
 </script>
 
 <template>

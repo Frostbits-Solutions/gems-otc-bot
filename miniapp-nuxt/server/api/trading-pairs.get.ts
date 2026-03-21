@@ -1,9 +1,5 @@
-import type { TradingPair, AlgorandAsset } from '@/models/crypto'
-
-/**
- * Real Algorand assets sourced from https://asa-list.tinyman.org/assets.json
- * Icons are loaded dynamically via: https://asa-list.tinyman.org/assets/{asa_id}/icon.png
- */
+import { defineEventHandler } from 'h3'
+import type { TradingPair, AlgorandAsset } from '../../app/models/crypto'
 
 // ── Core / Stablecoins ─────────────────────────────────────────────────────
 const ALGO: AlgorandAsset = { name: 'Algorand', asa_id: 0, ticker: 'ALGO' }
@@ -67,7 +63,7 @@ const GAIN: AlgorandAsset = { name: 'GAIN', asa_id: 684649672, ticker: 'GAIN' }
 const OMNI: AlgorandAsset = { name: 'Omnicoin', asa_id: 942958458, ticker: 'OMNI' }
 
 // ── Core curated trading pairs ─────────────────────────────────────────────
-export const mockTradingPairs: TradingPair[] = [
+const mockTradingPairs: TradingPair[] = [
   // Major pairs vs ALGO
   { base_asset: goBTC,  quote_asset: ALGO,  current_price: 170567.89234567, daily_volume: 2456789.12, listing_count: 8 },
   { base_asset: goETH,  quote_asset: ALGO,  current_price: 9123.45,         daily_volume: 8934567.89, listing_count: 7 },
@@ -120,7 +116,6 @@ export const mockTradingPairs: TradingPair[] = [
 ]
 
 // ── Extended asset pool for generator ─────────────────────────────────────
-// All sourced from https://asa-list.tinyman.org/assets.json
 const EXTENDED_POOL: AlgorandAsset[] = [
   ALGO, USDC, USDT, STBL2, DJED, GARD, xUSD,
   goBTC, goETH, xSOL, goLink, pBTC,
@@ -247,14 +242,8 @@ function generateExtraPairs(count: number): TradingPair[] {
 
 const allPairs = [...mockTradingPairs, ...generateExtraPairs(550)]
 
-/**
- * Simulate API delay for fetching trading pairs.
- * @param delayMs - Delay in milliseconds (default: 500ms)
- */
-export async function fetchMockTradingPairs(delayMs: number = 500): Promise<TradingPair[]> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([...allPairs])
-    }, delayMs)
-  })
-}
+export default defineEventHandler(async (event) => {
+  // Simulate API delay for realism
+  await new Promise(resolve => setTimeout(resolve, 500))
+  return allPairs
+})

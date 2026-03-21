@@ -1,11 +1,12 @@
 <script setup lang="ts">
 const store = useTradingPairsStore();
 
-onMounted(async () => {
+useAsyncData(ASYNC_KEYS.TRADING_PAIRS_FETCH, async () => {
   if (store.pairCount === 0) {
     await store.fetchPairs();
   }
-});
+  return true;
+}, { server: false });
 </script>
 
 <template>

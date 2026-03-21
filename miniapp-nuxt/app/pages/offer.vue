@@ -9,9 +9,6 @@ const tradingPairsStore = useTradingPairsStore();
 const { getQueryParams, updateQueryParams } = useUrlManager();
 
 const loadPairFromUrl = async () => {
-  if (tradingPairsStore.pairs.length === 0) {
-    await tradingPairsStore.fetchPairs();
-  }
 
   const { baseId, quoteId } = getQueryParams();
 
@@ -56,7 +53,14 @@ const handleSwapAssets = () => {
   loadPairFromUrl();
 };
 
-onMounted(loadPairFromUrl);
+useAsyncData(ASYNC_KEYS.TRADING_PAIRS_FETCH, async () => {
+  if (tradingPairsStore.pairs.length === 0) {
+    await tradingPairsStore.fetchPairs();
+  }
+  return true;
+}, { server: false });
+
+loadPairFromUrl();
 
 // Watch for URL changes (e.g., when clicking back/forward or swap)
 watch(

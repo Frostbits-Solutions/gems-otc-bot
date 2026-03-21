@@ -9,6 +9,10 @@ dist
 # Node dependencies
 node_modules
 
+# Nuxt build artifacts
+.nuxt/
+.output/
+
 # Logs
 logs
 *.log
