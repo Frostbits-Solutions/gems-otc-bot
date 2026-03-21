@@ -2,13 +2,14 @@
 
 ## Architecture Overview
 
-This is a **modular Telegram bot** built with `python-telegram-bot` library, using Docker for deployment and VS Code for debugging. The codebase separates concerns into distinct modules under `src/`:
+This project consists of a **modular Telegram bot** built with `python-telegram-bot` library and a **Nuxt 3 Mini App frontend**. The bot uses Docker for deployment and VS Code for debugging. The codebase separates concerns into distinct modules under `src/` for the bot, and `miniapp-nuxt/` for the frontend:
 
 - **`src/handlers/`** - Command handlers by functionality (basic, admin, message types)
 - **`src/config/`** - Environment-based configuration with validation
 - **`src/utils/`** - Reusable decorators and logging utilities
 - **`src/models/`** - Data classes for users and messages
 - **`main.py`** - Entry point with handler registration and app lifecycle
+- **`miniapp-nuxt/`** - Nuxt 3 Vue frontend for the Telegram WebApp
 
 ## Critical Patterns
 
@@ -38,10 +39,16 @@ from src.config.settings import config
 
 ## Development Workflows
 
-### Docker Development
+### Docker Development (Bot)
 - **Production**: `docker compose up -d` (uses `Dockerfile`)
 - **Debug**: `docker compose -f docker-compose.debug.yml up --build -d` (uses `Dockerfile.debug` with debugpy)
 - **VS Code Debug**: F5 → automatically starts debug container and attaches
+
+### Mini App Development (Nuxt 3)
+- **Frontend Path**: `miniapp-nuxt/` (Nuxt 3 app with Vue 3).
+- **Deployment Script**: Use `./scripts/debug-deploy.sh` to build the Nuxt app (`npm run build`), start the Node SSR server on port `8080`, and tunnel it publicly via `ngrok`.
+- **Teardown Script**: Use `./scripts/debug-stop.sh` to safely spin down the Nuxt Node process and the `ngrok` tunnel locally.
+- **Environment Automation**: The debug deploy script will automatically update `.env.development.local` with the new `ngrok` URL for `MINI_APP_URL`.
 
 ### Python Path Setup
 The project uses `sys.path.insert(0, str(Path(__file__).parent / "src"))` in `main.py` to make `src/` importable. **Always use relative imports within src/** (e.g., `from ..utils.logger import get_logger`).

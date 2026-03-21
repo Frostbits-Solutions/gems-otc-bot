@@ -2,32 +2,32 @@
 
 # Debug Stop Script - Stops all debug services
 
-NGINX_PID_FILE="/tmp/nginx-miniapp.pid"
+NUXT_PID_FILE="/tmp/nuxt-miniapp.pid"
 NGROK_PID_FILE="/tmp/ngrok-miniapp.pid"
-NGINX_PORT=8080
+NUXT_PORT=8080
 
 echo "=== Stopping Debug Services ==="
 
-# Stop nginx
-if [ -f "$NGINX_PID_FILE" ]; then
-    PID=$(cat "$NGINX_PID_FILE")
+# Stop Nuxt Node Server
+if [ -f "$NUXT_PID_FILE" ]; then
+    PID=$(cat "$NUXT_PID_FILE")
     if ps -p $PID > /dev/null 2>&1; then
-        echo "Stopping nginx (PID: $PID)..."
+        echo "Stopping Nuxt SSR (PID: $PID)..."
         kill $PID 2>/dev/null || true
-        rm -f "$NGINX_PID_FILE"
-        echo "Nginx stopped"
+        rm -f "$NUXT_PID_FILE"
+        echo "Nuxt SSR stopped"
     else
-        echo "Nginx process not found"
-        rm -f "$NGINX_PID_FILE"
+        echo "Nuxt process not found"
+        rm -f "$NUXT_PID_FILE"
     fi
 else
-    echo "Nginx PID file not found"
+    echo "Nuxt PID file not found"
 fi
 
-# Stop any process on nginx port
-EXISTING_PID=$(lsof -ti:$NGINX_PORT 2>/dev/null)
+# Stop any process on Nuxt port
+EXISTING_PID=$(lsof -ti:$NUXT_PORT 2>/dev/null)
 if [ ! -z "$EXISTING_PID" ]; then
-    echo "Stopping process on port $NGINX_PORT (PID: $EXISTING_PID)..."
+    echo "Stopping process on port $NUXT_PORT (PID: $EXISTING_PID)..."
     kill $EXISTING_PID 2>/dev/null || true
 fi
 
@@ -51,6 +51,6 @@ fi
 pkill -f "ngrok http" 2>/dev/null || true
 
 # Clean up temporary files
-rm -f /tmp/ngrok.log /tmp/nginx-miniapp.conf
+rm -f /tmp/ngrok.log /tmp/nginx-miniapp.conf /tmp/nginx-miniapp.pid /tmp/nuxt-ssr.log
 
 echo "=== All Debug Services Stopped ==="

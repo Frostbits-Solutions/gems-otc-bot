@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Debug Deployment Script for Telegram Mini App
-# This script builds Vue app, deploys nginx, starts ngrok, and updates environment
+# This script builds Nuxt app, starts Node server, starts ngrok, and updates environment
 
 set -e
 
 # Get the project directory dynamically (parent of scripts directory)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-NGINX_PORT=8080
-NGINX_PID_FILE="/tmp/nginx-miniapp.pid"
+NUXT_PORT=8080
+NUXT_PID_FILE="/tmp/nuxt-miniapp.pid"
 NGROK_PID_FILE="/tmp/ngrok-miniapp.pid"
 ENV_FILE="$PROJECT_DIR/.env.development.local"
 
@@ -30,18 +30,18 @@ stop_existing_processes() {
     else
         echo "Warning: debug-stop.sh not found, performing manual cleanup..."
         
-        # Fallback cleanup (simplified version)
-        pkill -f "nginx.*nginx.conf" 2>/dev/null || true
+        # Fallback cleanup
+        pkill -f "node .output/server/index.mjs" 2>/dev/null || true
         pkill -f "ngrok http" 2>/dev/null || true
-        rm -f "$NGINX_PID_FILE" "$NGROK_PID_FILE" /tmp/ngrok.log
+        rm -f "$NUXT_PID_FILE" "$NGROK_PID_FILE" /tmp/ngrok.log
         sleep 2
     fi
 }
 
-# Function to build Vue app
-build_vue_app() {
-    echo "Building Vue.js Mini App..."
-    cd "$PROJECT_DIR/miniapp-vue"
+# Function to build Nuxt app
+build_nuxt_app() {
+    echo "Building Nuxt.js Mini App..."
+    cd "$PROJECT_DIR/miniapp-nuxt"
     
     if [ ! -d "node_modules" ]; then
         echo "Installing npm dependencies..."
@@ -51,33 +51,34 @@ build_vue_app() {
     npm run build
     
     if [ $? -ne 0 ]; then
-        echo "Error: Failed to build Vue.js app"
+        echo "Error: Failed to build Nuxt app"
         exit 1
     fi
     
     cd "$PROJECT_DIR"
 }
 
-# Function to start nginx
-start_nginx() {
-    echo "Starting nginx server..."
+# Function to start Nuxt server
+start_nuxt_server() {
+    echo "Starting Nuxt SSR server..."
     
-    # Create a temporary nginx config with correct paths
-    TEMP_NGINX_CONF="/tmp/nginx-miniapp.conf"
-    sed "s|PROJECT_DIR_PLACEHOLDER|$PROJECT_DIR|g" "$PROJECT_DIR/nginx.conf" > "$TEMP_NGINX_CONF"
+    cd "$PROJECT_DIR/miniapp-nuxt"
     
-    nginx -c "$TEMP_NGINX_CONF"
+    # Run the server with specific port
+    export PORT=$NUXT_PORT
+    export HOST=127.0.0.1
+    nohup node .output/server/index.mjs > /tmp/nuxt-ssr.log 2>&1 &
     
+    local PID=$!
     if [ $? -eq 0 ]; then
-        local PID=$(pgrep -f "nginx.*nginx-miniapp.conf")
-        echo $PID > "$NGINX_PID_FILE"
-        echo "Nginx started successfully on port $NGINX_PORT"
-        echo "Nginx config: $TEMP_NGINX_CONF"
+        echo $PID > "$NUXT_PID_FILE"
+        echo "Nuxt SSR started successfully on port $NUXT_PORT"
     else
-        echo "Error: Failed to start nginx server"
-        rm -f "$TEMP_NGINX_CONF"
+        echo "Error: Failed to start Nuxt SSR server"
         exit 1
     fi
+    
+    cd "$PROJECT_DIR"
 }
 
 # Function to start ngrok
@@ -91,7 +92,7 @@ start_ngrok() {
     fi
     
     # Start ngrok in background
-    nohup ngrok http $NGINX_PORT > /tmp/ngrok.log 2>&1 &
+    nohup ngrok http $NUXT_PORT > /tmp/ngrok.log 2>&1 &
     local NGROK_PID=$!
     echo $NGROK_PID > "$NGROK_PID_FILE"
     
@@ -141,12 +142,6 @@ main() {
     echo "Project Directory: $PROJECT_DIR"
     
     # Check prerequisites
-    if ! command_exists nginx; then
-        echo "Error: nginx not found. Please install nginx first."
-        echo "macOS: brew install nginx"
-        exit 1
-    fi
-    
     if ! command_exists node; then
         echo "Error: Node.js not found. Please install Node.js first."
         exit 1
@@ -154,13 +149,13 @@ main() {
     
     # Execute deployment steps
     stop_existing_processes
-    build_vue_app
-    start_nginx
+    build_nuxt_app
+    start_nuxt_server
     start_ngrok
     
     echo ""
     echo "=== Debug Deployment Complete ==="
-    echo "Local URL: http://localhost:$NGINX_PORT/"
+    echo "Local URL: http://localhost:$NUXT_PORT/"
     echo "Public URL: $(grep MINI_APP_URL= $ENV_FILE | cut -d'=' -f2)"
     echo ""
     echo "Next steps:"
