@@ -42,15 +42,14 @@ telegram-bot-test/
 │   ├── Dockerfile.debug # Debug container
 │   ├── docker-compose.yml
 │   └── docker-compose.debug.yml
-├── miniapp-vue/         # Vue.js Mini App (WIP)
-│   ├── src/
-│   ├── dist/
+├── miniapp-nuxt/        # Nuxt 3 Mini App
+│   ├── app/
+│   ├── server/
 │   └── package.json
 ├── scripts/             # Deployment and utility scripts
 │   ├── debug-deploy.sh  # Mini App deployment script
 │   └── debug-stop.sh    # Stop debug services
 ├── .vscode/             # VS Code debug configurations
-├── nginx.conf           # nginx configuration for Mini App
 ├── .env.development.local # Environment variables
 └── README.md
 ```
@@ -61,12 +60,7 @@ telegram-bot-test/
 
 1. **Python 3.11+** with pip
 2. **Docker & Docker Compose** - For containerized deployment
-3. **Node.js 18+ and npm** - Required for Mini App development
-4. **nginx** - Web server for Mini App hosting
-   ```bash
-   # macOS
-   brew install nginx
-   ```
+3. **Node.js 22+ and npm** - Required for Mini App development
 5. **ngrok** - For HTTPS tunneling (Mini Apps require HTTPS)
    - Download from [ngrok.com](https://ngrok.com/download)
    - Follow installation instructions for your OS
@@ -151,7 +145,7 @@ pip install -r requirements.txt
 cd ..
 
 # Install Node.js dependencies (for Mini App)
-cd miniapp-vue
+cd miniapp-nuxt
 npm install
 cd ..
 ```
@@ -230,9 +224,9 @@ from src.models.fastapi.schema_public_latest import CurrenciesBaseSchema
 
 ## Mini App
 
-**Status: Work in Progress (WIP)**
+**Status: Active Development**
 
-The Mini App is a Vue.js 3 application that integrates with Telegram's WebApp API. Currently provides basic functionality:
+The Mini App is a Nuxt 3 application that integrates with Telegram's WebApp API. Currently provides basic functionality:
 
 - User greeting with Telegram user information
 - Platform detection (mobile/desktop)
@@ -248,7 +242,7 @@ The Mini App is a Vue.js 3 application that integrates with Telegram's WebApp AP
 3. Test commands in Telegram
 
 ### For Mini App Development  
-1. Modify Vue.js code in `miniapp-vue/`
+1. Modify Nuxt code in `miniapp-nuxt/`
 2. Use VS Code "Debug: Mini App + Bot" for full stack debugging
 3. Test with `/startapp` command in Telegram
 
